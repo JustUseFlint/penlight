@@ -2,7 +2,7 @@ PASS  job progress page shown
 PASS  redirects to the finished study set
 PASS  guide shows Lite label + sample label
 PASS  guide has timestamp chips linking key points
-PASS  PDF downloads from the UI  — 320833 bytes, penlight-cardiac-conduction-dysrhythmias.pdf
+PASS  PDF downloads from the UI  — 318787 bytes, penlight-cardiac-conduction-dysrhythmias.pdf
 PASS  lecture tabs switch without errors
 PASS  Space flips the card and shows grade buttons
 PASS  keys 3 and 1 grade cards and the counter moves  — 20 left → 19 left

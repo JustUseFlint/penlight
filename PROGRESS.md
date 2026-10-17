@@ -1,14 +1,12 @@
-# Penlight build progress (update as pieces finish)
-- [x] Content: 319 questions, 361 cards, 90 lessons, 8 programs, 3 samples
-- [x] Libs, API routes, UI pages written; production build green
-- [x] Server runs on :3100 (`ALLOW_TIME_TRAVEL=1 npx next start -p 3100`, log in logs/server.log)
-- [x] Sample ingest API works (cardiac-conduction -> 47 cards/18 q)
-- [x] YouTube real URLs: tested; this box IP is bot-blocked by YouTube now (honest limitation; YTDLP_COOKIES supported)
-- [x] Whisper fallback tested on archive.org URL (see below)
-- [x] vitest suites (58 tests green) + scripts/mock-llm.mjs
-- [x] API e2e on fresh DB (scripts/e2e-api.mjs, 70/70; docs/e2e-api-results.txt): samples, PDF, SRS over simulated days, tests, games, programs, accounts, AI mock
-- [ ] Playwright UI e2e (flow, games, accounts, programs, SRS days)
-- [ ] Screenshots desktop+mobile -> docs/screenshots
-- [ ] Medical accuracy review pass
-- [ ] README + Dockerfile
-- [ ] Final report
+# Penlight build progress
+- [x] Content: 319 questions, 361 cards, 90 lessons, 8 programs, 3 samples (all 1,500+ words)
+- [x] Libs, API routes, UI pages; production build green
+- [x] Server on :3100
+- [x] Sample ingest; YouTube real URLs tested (this box IP is bot-blocked; YTDLP_COOKIES supported); whisper fallback tested (archive.org)
+- [x] vitest (58) + mock LLM; API e2e 70/70 (docs/e2e-api-results.txt)
+- [x] Playwright UI e2e 60/60 incl. axe contrast, all 4 games, accounts, SRS, programs (docs/e2e-ui-results.txt)
+- [x] Medical accuracy review pass (docs/medical-review.md)
+- [x] Screenshots desktop + mobile -> docs/screenshots (scripts/capture-all.mjs, capture-extra.mjs)
+- [x] README + Dockerfile (Dockerfile not built: no docker on this box)
+- [x] Self-critique (docs/SELF-CRITIQUE.md)
+- [x] Final report (server left running on :3100, clean DB)
