@@ -1,0 +1,2 @@
+export interface Prog { id: string; title: string; subtitle: string; description: string; exam: string; level: string; duration: string; hue: string; icon: string; outcomes: string[]; weeks: number; totalDays: number; completeDays: number; pct: number; enrolled: boolean; nextDay: number | null; minutesPerDay: number }
+export const HUE: Record<string, string> = { brand: 'bg-brand-50 text-brand-700', coral: 'bg-coral-50 text-coral-600', sun: 'bg-sun-50 text-sun-600', sky: 'bg-sky-50 text-sky-600', grape: 'bg-grape-50 text-grape-600' };

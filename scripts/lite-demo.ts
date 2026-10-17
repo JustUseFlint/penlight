@@ -1,0 +1,13 @@
+import { loadSample, SAMPLES } from '../src/lib/ingest/samples';
+import { buildLite } from '../src/lib/lite/engine';
+const slug = process.argv[2] || SAMPLES[0].slug;
+const { sample, segments, durationSec } = loadSample(slug);
+const t0 = Date.now();
+const out = buildLite(segments, { title: sample.title, durationSec, seed: slug });
+console.log('ms', Date.now() - t0);
+console.log(JSON.stringify({ ...out.guide, glossary: out.guide.glossary.length }, null, 1).slice(0, 6000));
+console.log('--- glossary'); for (const g of out.guide.glossary) console.log((g.inferred ? '~' : '*'), g.term, '::', g.definition.slice(0, 110));
+console.log('--- cards', out.cards.length); for (const c of out.cards.slice(0, 40)) console.log(c.type, '|', c.front.slice(0, 100), '=>', c.back.slice(0, 60));
+console.log('--- qs', out.questions.length); for (const q of out.questions) console.log(q.type, q.stem.replace(/\n/g, ' ').slice(0, 130), '\n   ', q.options.map((o, i) => (q.correct.includes(i) ? '[x] ' : '[ ] ') + o.slice(0, 50)).join(' | '));
+console.log('--- tf', out.guide.games.tf.length, '\n', out.guide.games.tf.slice(0, 6).map((t) => t.answer + ' ' + t.statement).join('\n'));
+console.log('--- seq', JSON.stringify(out.guide.games.sequences, null, 1));

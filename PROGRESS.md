@@ -1,0 +1,13 @@
+# Penlight build progress (update as pieces finish)
+- [x] Content: 319 questions, 361 cards, 90 lessons, 8 programs, 3 samples
+- [x] Libs, API routes, UI pages written; production build green
+- [x] Server runs on :3100 (`ALLOW_TIME_TRAVEL=1 npx next start -p 3100`, log in logs/server.log)
+- [x] Sample ingest API works (cardiac-conduction -> 47 cards/18 q)
+- [x] YouTube real URLs: tested; this box IP is bot-blocked by YouTube now (honest limitation; YTDLP_COOKIES supported)
+- [x] Whisper fallback tested on archive.org URL (see below)
+- [ ] vitest suites + mock LLM server
+- [ ] Playwright e2e (flow, games, accounts, programs, SRS days)
+- [ ] Screenshots desktop+mobile -> docs/screenshots
+- [ ] Medical accuracy review pass
+- [ ] README + Dockerfile
+- [ ] Final report
