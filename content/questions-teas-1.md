@@ -204,7 +204,7 @@ R: Multiply by the reciprocal: 3/4 × 8/3 = 24/12 = 2.
 Q: What is 0.45 × 0.2?
 - 0.9
 + 0.09
-- 0.9
+- 0.65
 - 0.009
 R: 45 × 2 = 90, with three decimal places total gives 0.090 = 0.09.
 Q: Convert 5/8 to a decimal.
@@ -289,7 +289,7 @@ Q: Solve for x: 4x − 7 = 21
 - 5
 R: 4x = 28, so x = 7.
 Q: Solve: 3(x + 2) = 24
-- 6
+- 4
 + 6
 - 8
 - 10

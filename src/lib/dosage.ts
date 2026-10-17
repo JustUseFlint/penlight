@@ -97,7 +97,8 @@ export function makeDrill(kinds: DrillKind[], n: number, seed: string): ServedQu
 }
 
 export function gradeNumeric(spec: { answer: number; tol?: number }, input: string): boolean {
-  const x = Number(String(input).replace(/,/g, '').trim());
+  const m = String(input).replace(/,/g, '').trim().match(/^-?\d*\.?\d+/);
+  const x = m ? Number(m[0]) : NaN;
   if (!Number.isFinite(x)) return false;
   return Math.abs(x - spec.answer) <= (spec.tol ?? 0.01) + 1e-9;
 }

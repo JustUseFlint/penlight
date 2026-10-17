@@ -5,7 +5,7 @@
 - [x] Sample ingest API works (cardiac-conduction -> 47 cards/18 q)
 - [x] YouTube real URLs: tested; this box IP is bot-blocked by YouTube now (honest limitation; YTDLP_COOKIES supported)
 - [x] Whisper fallback tested on archive.org URL (see below)
-- [ ] vitest suites + mock LLM server
+- [x] vitest suites (58 tests green) + scripts/mock-llm.mjs
 - [ ] Playwright e2e (flow, games, accounts, programs, SRS days)
 - [ ] Screenshots desktop+mobile -> docs/screenshots
 - [ ] Medical accuracy review pass

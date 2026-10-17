@@ -59,7 +59,7 @@ Q: Cardiac output is calculated as
 + heart rate × stroke volume.
 - blood pressure × heart rate.
 - stroke volume − heart rate.
-R: CO = HR × SV.
+R: Cardiac output (CO) = heart rate (HR) × stroke volume (SV), the amount of blood the heart pumps each minute.
 Q: The "lub" heart sound (S1) is produced by closure of the
 + mitral and tricuspid valves.
 - aortic and pulmonic valves.
