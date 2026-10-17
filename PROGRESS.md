@@ -10,3 +10,11 @@
 - [x] README + Dockerfile (Dockerfile not built: no docker on this box)
 - [x] Self-critique (docs/SELF-CRITIQUE.md)
 - [x] Final report (server left running on :3100, clean DB)
+
+## Hosting (full server edition)
+- [x] Static/GitHub-Pages edition dropped (not published)
+- [x] Host research (Oct 2026) -> docs/DEPLOY.md; chosen: Render free (Docker), no card
+- [x] /api/health, APP_SECRET env, scripts/start.mjs (Postgres snapshot persistence), low-memory PDF + print fallback
+- [x] Dockerfile steps simulated on a clean clone (npm ci, playwright shell, worker setup, build, prune, start on :10000): health, ingest, 9-page PDF, YouTube-blocked message, snapshot restore all OK
+- [x] Public GitHub repo: https://github.com/JustUseFlint/penlight
+- [ ] Brian: click Deploy to Render, paste a free Neon/Supabase postgres:// URL as PERSIST_DATABASE_URL
