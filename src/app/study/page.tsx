@@ -112,6 +112,7 @@ function StudyInner() {
       </div>
     );
   }
+  if (!card) return <div className="max-w-2xl mx-auto space-y-4"><Skeleton className="h-4" /><Skeleton className="h-80" /></div>;
   const remaining = queue.length;
   const progress = total.current ? ((total.current - remaining) / total.current) * 100 : 0;
   const isCloze = card.type === 'cloze';

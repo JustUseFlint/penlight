@@ -82,7 +82,7 @@ export default function ProgressPage() {
 
       <section aria-labelledby="a-h"><div className="flex items-center justify-between mb-3"><h2 id="a-h" className="text-2xl font-extrabold">Achievements</h2><Badge tone="sun">{unlocked}/{d.achievements.length} unlocked</Badge></div>
         <div className="grid grid-cols-2 md:grid-cols-4 gap-3">{d.achievements.map((a) => { const I = AI[a.icon] || Award; const on = !!a.unlockedAt; return (
-          <div key={a.key} className={`card p-4 ${on ? '' : 'opacity-60'}`}><span className={`h-11 w-11 rounded-2xl grid place-items-center mb-2 ${on ? 'bg-sun-100 text-sun-600' : 'bg-line text-faint'}`}><I size={22} aria-hidden /></span><div className="font-bold leading-tight">{a.title}</div><div className="text-xs text-muted mt-0.5">{a.desc}</div>{on && <div className="text-[11px] font-bold text-brand-700 mt-1.5">Unlocked</div>}</div>); })}</div>
+          <div key={a.key} className={`card p-4 ${on ? '' : 'bg-line/30'}`}><span className={`h-11 w-11 rounded-2xl grid place-items-center mb-2 ${on ? 'bg-sun-100 text-sun-600' : 'bg-line text-faint'}`}><I size={22} aria-hidden /></span><div className="font-bold leading-tight">{a.title}</div><div className="text-xs text-muted mt-0.5">{a.desc}</div>{on && <div className="text-[11px] font-bold text-brand-700 mt-1.5">Unlocked</div>}</div>); })}</div>
       </section>
       <Disclaimer className="max-w-3xl" />
     </div>

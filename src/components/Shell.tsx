@@ -26,7 +26,7 @@ function Chips() {
         <Flame size={16} aria-hidden /> {summary?.streak.current ?? 0}
       </Link>
       <Link href="/progress" aria-label={`Level ${summary?.xp.level ?? 1}, ${summary?.xp.xp ?? 0} XP`} className="inline-flex items-center gap-1.5 h-9 px-3 rounded-full font-bold text-sm tnum bg-sun-50 border border-sun-500/30 text-sun-600">
-        <Zap size={16} aria-hidden /> {summary?.xp.xp ?? 0} <span className="hidden sm:inline text-xs font-semibold opacity-80">Lv {summary?.xp.level ?? 1}</span>
+        <Zap size={16} aria-hidden /> {summary?.xp.xp ?? 0} <span className="hidden sm:inline text-xs font-semibold">Lv {summary?.xp.level ?? 1}</span>
       </Link>
       {me?.user.isGuest === false && <span className="hidden md:inline text-sm font-semibold text-muted ml-1 max-w-[120px] truncate">{me.user.name}</span>}
     </div>

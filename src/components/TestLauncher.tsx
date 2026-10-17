@@ -21,7 +21,7 @@ export function TestLauncher({ scope, title, compact, defaultCount = 10, disable
   const seg = (on: boolean) => cx('h-10 px-4 rounded-lg text-sm font-bold transition inline-flex items-center gap-1.5', on ? 'bg-surface shadow-card text-ink' : 'text-muted hover:text-ink');
   return (
     <div className={cx(!compact && 'card p-5 md:p-6')}>
-      <div className="grid gap-4 sm:grid-cols-3">
+      <div className="flex flex-wrap gap-x-6 gap-y-4">
         <div><div className="label">Questions</div><div role="radiogroup" aria-label="Number of questions" className="inline-flex p-1 rounded-xl bg-line/50">{[5, 10, 20].map((n) => <button key={n} role="radio" aria-checked={count === n} onClick={() => setCount(n)} className={seg(count === n)}>{n}</button>)}</div></div>
         <div><div className="label">Mode</div><div role="radiogroup" aria-label="Mode" className="inline-flex p-1 rounded-xl bg-line/50">
           <button role="radio" aria-checked={mode === 'tutor'} onClick={() => setMode('tutor')} className={seg(mode === 'tutor')}><Lightbulb size={14} aria-hidden /> Tutor</button>

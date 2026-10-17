@@ -56,7 +56,7 @@ export default function PracticePage() {
                   {g.tiles.map((t) => (
                     <button key={t.key} onClick={() => setSel(t)} aria-pressed={sel?.key === t.key} className={cx('card card-hover text-left p-4 flex items-center gap-3 border-2', sel?.key === t.key ? '!border-brand-500 bg-brand-50/60' : 'border-transparent')}>
                       <span className="h-11 w-11 rounded-xl bg-brand-50 text-brand-700 grid place-items-center shrink-0"><t.icon size={20} aria-hidden /></span>
-                      <span className="min-w-0"><span className="block font-bold leading-tight truncate">{t.title}</span><span className="block text-sm text-muted truncate">{t.sub}{t.n !== undefined ? ` · ${t.n} questions` : ''}</span></span>
+                      <span className="min-w-0"><span className="block font-bold leading-tight">{t.title}</span><span className="block text-sm text-muted leading-snug">{t.sub}{t.n !== undefined ? ` · ${t.n} questions` : ''}</span></span>
                     </button>
                   ))}
                 </div>

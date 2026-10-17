@@ -5,3 +5,4 @@ data/
 logs/
 tsconfig.tsbuildinfo
 *.log
+data-demo/

@@ -1,6 +1,7 @@
 import { getDb, now, uid } from './db';
 import { logActivity, checkAchievements } from './progress';
 import { rng, shuffle } from './lite/text';
+import { GLOSSARY_MAP } from './lite/glossary';
 import { SEQUENCES } from './sequences';
 import { completeProgramTask } from './programs-db';
 import type { Guide } from './types';
@@ -35,19 +36,26 @@ function loadCards(userId: string, src: GameSource): { cards: CardRow[]; label: 
 const clozeAnswer = (front: string) => front.match(/\{\{c1::(.+?)(?:::.+?)?\}\}/)?.[1];
 const plain = (s: string) => s.replace(/\{\{c1::(.+?)(?:::.+?)?\}\}/g, '$1');
 
-/** Pick a good word to blank from a definition. Returns null if no good candidate. */
-function pickBlank(text: string, avoid: string): { before: string; word: string; after: string } | null {
+const LOWINFO = new Set('however mentioned similarly unlike because therefore usually always never about approximately generally typically example before after during while although whether either neither include includes including called known given using used also often another other several various common commonly mostly normal normally likely means means'.split(' '));
+
+/** Pick a good word to blank from a definition. Returns null unless the result is a meaningful, answerable gap. */
+function pickBlank(text: string, front: string): { before: string; word: string; after: string } | null {
+  const words = text.trim().split(/\s+/);
+  if (words.length < 6 || text.length < 35 || text.length > 170) return null;
+  if ((text.match(/,/g) || []).length > 2 || /\b(first|next|then|finally)\b.*,.*,/i.test(text)) return null; // lists / signal-word lists make bad gaps
   const re = /[A-Za-z][A-Za-z'-]{4,}/g;
   let m: RegExpExecArray | null;
-  const cands: { i: number; w: string }[] = [];
+  const cands: { i: number; w: string; score: number }[] = [];
   while ((m = re.exec(text))) {
-    const w = m[0];
-    if (STOPW.has(w.toLowerCase()) || avoid.toLowerCase().includes(w.toLowerCase())) continue;
-    cands.push({ i: m.index, w });
+    const w = m[0], lw = w.toLowerCase();
+    if (STOPW.has(lw) || LOWINFO.has(lw) || front.toLowerCase().includes(lw)) continue;
+    const inGloss = GLOSSARY_MAP.has(lw) || GLOSSARY_MAP.has(lw.replace(/s$/, ''));
+    cands.push({ i: m.index, w, score: (inGloss ? 20 : 0) + Math.min(w.length, 12) + (/[a-z]{3}(?:emia|osis|itis|pnea|cardia|uria|algia|pathy|ectomy|oma)\b/.test(lw) ? 8 : 0) });
   }
   if (!cands.length) return null;
-  const best = cands.sort((a, b) => b.w.length - a.w.length)[0];
-  return { before: text.slice(0, best.i), word: best.w, after: text.slice(best.i + best.w.length) };
+  const best = cands.sort((a, b) => b.score - a.score)[0];
+  const sentence = `${front.trim().replace(/[?:.]+$/, '')}: ${text.slice(0, best.i)}`;
+  return { before: sentence, word: best.w, after: text.slice(best.i + best.w.length) };
 }
 
 export function gameData(userId: string, game: GameId, src: GameSource) {
