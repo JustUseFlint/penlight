@@ -56,7 +56,7 @@ export function IngestBox({ hero = false, initialTab = 'link', samples }: { hero
         {tab === 'link' && (
           <div className={cx('flex gap-2', hero ? 'flex-col sm:flex-row' : 'flex-col sm:flex-row')}>
             <label className="sr-only" htmlFor="video-url">Lecture video link</label>
-            <input id="video-url" className={cx('input', hero && 'h-14 text-base sm:text-lg')} placeholder="Paste a lecture link (YouTube or other)" value={url} onChange={(e) => setUrl(e.target.value)} inputMode="url" autoComplete="off" />
+            <input id="video-url" className={cx('input', hero && '!h-16 !rounded-2xl text-base sm:text-xl !px-5')} placeholder="Paste a lecture link (YouTube or other)" value={url} onChange={(e) => setUrl(e.target.value)} inputMode="url" autoComplete="off" />
             <Button size={hero ? 'lg' : undefined} loading={busy} type="submit" className="sm:w-auto shrink-0"><Wand2 size={18} aria-hidden /> Build study set</Button>
           </div>
         )}

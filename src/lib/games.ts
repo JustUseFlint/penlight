@@ -78,7 +78,8 @@ export function gameData(userId: string, game: GameId, src: GameSource) {
     const pool = shuffle(pairs, r);
     for (let i = 0; i < pool.length && items.length < 30; i++) {
       const c = pool[i];
-      const other = pool[(i + 1 + Math.floor(r() * (pool.length - 1))) % pool.length];
+      const sameTopic = pool.filter((x) => x.id !== c.id && x.topic && x.topic === c.topic && x.back !== c.back);
+      const other = sameTopic.length >= 2 ? sameTopic[Math.floor(r() * sameTopic.length)] : pool[(i + 1 + Math.floor(r() * (pool.length - 1))) % pool.length];
       const truthy = r() < 0.5 || other.id === c.id || other.back === c.back;
       items.push({ statement: `${c.front}: ${truthy ? c.back : other.back}`, answer: truthy, explanation: truthy ? `Correct. ${c.front}: ${c.back}` : `False. ${c.front}: ${c.back}` });
     }

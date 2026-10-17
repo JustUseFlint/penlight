@@ -46,7 +46,7 @@ export default function HomePage() {
           </div>
           <div className="hidden md:block"><HeroArt className="w-full h-auto" /></div>
         </div>
-        <div className="mt-6 md:mt-8 max-w-3xl"><IngestBox hero samples={samples.data?.samples} /></div>
+        <div className="mt-6 md:mt-8 max-w-4xl"><IngestBox hero samples={samples.data?.samples} /></div>
       </section>
 
       {/* continue studying */}
