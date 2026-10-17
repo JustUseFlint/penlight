@@ -1,0 +1,62 @@
+PASS  job progress page shown
+PASS  redirects to the finished study set
+PASS  guide shows Lite label + sample label
+PASS  guide has timestamp chips linking key points
+PASS  PDF downloads from the UI  — 320833 bytes, penlight-cardiac-conduction-dysrhythmias.pdf
+PASS  lecture tabs switch without errors
+PASS  Space flips the card and shows grade buttons
+PASS  keys 3 and 1 grade cards and the counter moves  — 20 left → 19 left
+PASS  graded cards reflected in the due count (again-card due soon)  — {"due":1,"newReady":17}
+PASS  tutor mode shows rationale after checking
+PASS  score report appears with per-topic breakdown
+PASS  retake-missed starts a new attempt
+PASS  Match Rush playable to completion  — 4 rounds
+PASS  Match Rush awards XP
+PASS  Speed Round shows the explanation on a wrong answer
+PASS  Speed Round playable to completion (keyboard T/F)  — 30 statements
+PASS  Fill the Gap flags a wrong answer and explains
+PASS  Fill the Gap playable to completion  — 14 items
+PASS  Sequence Builder playable to completion  — 6 puzzles
+PASS  games awarded XP and are on the dashboard  — xp 354
+PASS  program day page lists tasks  — Skip to content Penlight Home Library 1 Programs Practice Games Progress Setting
+PASS  finishing a lesson in the UI completes its program task
+PASS  UI sign-up upgrades guest, progress preserved
+PASS  UI sign-out returns a fresh guest
+PASS  UI login works
+PASS  dark mode toggles data-theme and persists on reload
+PASS  dark theme persisted
+PASS  axe light 1280px /: no serious/critical
+PASS  axe light 1280px /library: no serious/critical
+PASS  axe light 1280px /programs: no serious/critical
+PASS  axe light 1280px /practice: no serious/critical
+PASS  axe light 1280px /games: no serious/critical
+PASS  axe light 1280px /progress: no serious/critical
+PASS  axe light 1280px /settings: no serious/critical
+PASS  axe light 1280px /study: no serious/critical
+PASS  axe light 390px /: no serious/critical
+PASS  axe light 390px /library: no serious/critical
+PASS  axe light 390px /programs: no serious/critical
+PASS  axe light 390px /practice: no serious/critical
+PASS  axe light 390px /games: no serious/critical
+PASS  axe light 390px /progress: no serious/critical
+PASS  axe light 390px /settings: no serious/critical
+PASS  axe light 390px /study: no serious/critical
+PASS  axe dark 1280px /: no serious/critical
+PASS  axe dark 1280px /library: no serious/critical
+PASS  axe dark 1280px /programs: no serious/critical
+PASS  axe dark 1280px /practice: no serious/critical
+PASS  axe dark 1280px /games: no serious/critical
+PASS  axe dark 1280px /progress: no serious/critical
+PASS  axe dark 1280px /settings: no serious/critical
+PASS  axe dark 1280px /study: no serious/critical
+PASS  axe dark 390px /: no serious/critical
+PASS  axe dark 390px /library: no serious/critical
+PASS  axe dark 390px /programs: no serious/critical
+PASS  axe dark 390px /practice: no serious/critical
+PASS  axe dark 390px /games: no serious/critical
+PASS  axe dark 390px /progress: no serious/critical
+PASS  axe dark 390px /settings: no serious/critical
+PASS  axe dark 390px /study: no serious/critical
+PASS  no uncaught page errors / console errors
+
+60/60 UI checks passed

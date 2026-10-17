@@ -72,7 +72,7 @@ await run('practice', async () => {
     const next = page.getByRole('button', { name: /Next question|See results/ }); await next.click();
     if (i === 4) break;
   }
-  await page.getByText(/Score|%/).first().waitFor({ timeout: 10000 });
+  await page.getByRole('heading', { name: /Breakdown by topic/ }).waitFor({ timeout: 15000 });
   T('score report appears with per-topic breakdown', /topic/i.test(await page.locator('body').innerText()));
   await page.screenshot({ path: `${SHOTS}/results.png`, fullPage: true });
   const retake = page.getByRole('button', { name: /Retake missed/ });
@@ -112,7 +112,7 @@ await run('gap', async () => {
     await page.getByRole('group', { name: 'Word bank' }).waitFor();
     const it = items[i]; const bad = i === 0;
     const target = bad ? it.options.find((o) => o !== it.answer) : it.answer;
-    await page.getByRole('group', { name: 'Word bank' }).getByRole('button', { name: new RegExp('(^|\\s)' + target.replace(/[.*+?^${}()|[\]\\]/g, '\\$&') + '$') }).click();
+    await page.evaluate((t) => { const b = [...document.querySelectorAll('[role=group][aria-label="Word bank"] button')].find((x) => x.textContent.trim().slice(1).trim() === t); b.click(); }, target);
     await page.getByText(/Correct\.|Not quite\./).waitFor();
     if (i === 0) T('Fill the Gap flags a wrong answer and explains', (await page.locator('body').innerText()).includes('Not quite.'));
     await page.getByRole('button', { name: /^(Next|Finish)$/ }).click();

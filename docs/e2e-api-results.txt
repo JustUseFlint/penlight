@@ -2,15 +2,15 @@ PASS  guest profile auto-created
 PASS  fresh dashboard has zero XP and no readiness  — xp,streak,today,week,cards,heatmap,mastery,readiness,trend,weak,recent,achievements,totals,due
 PASS  sample "cardiac-conduction" ingests (Lite)
 PASS    cardiac-conduction: guide + counts + Lite label  — {"cards":47,"questions":17}
-PASS    cardiac-conduction: PDF served  — 319136 bytes
+PASS    cardiac-conduction: PDF served  — 319474 bytes
 PASS  sample "medication-safety" ingests (Lite)
 PASS    medication-safety: guide + counts + Lite label  — {"cards":47,"questions":16}
-PASS    medication-safety: PDF served  — 320101 bytes
+PASS    medication-safety: PDF served  — 319912 bytes
 PASS  sample "potassium-sodium" ingests (Lite)
-PASS    potassium-sodium: guide + counts + Lite label  — {"cards":41,"questions":15}
-PASS    potassium-sodium: PDF served  — 300251 bytes
+PASS    potassium-sodium: guide + counts + Lite label  — {"cards":42,"questions":15}
+PASS    potassium-sodium: PDF served  — 300524 bytes
 PASS  pasted transcript ingests
-PASS  upload .srt accepted  — {"jobId":"cd676926bdee4ed8","lectureId":"ad4bf6d2364740fc"}
+PASS  upload .srt accepted  — {"jobId":"8871d2ab15da41e1","lectureId":"17a56e2827254426"}
 PASS  uploaded .srt ingests
 PASS  private-network URL rejected (SSRF guard)
 PASS  too-short paste gives a friendly job error or 400
@@ -26,10 +26,10 @@ PASS  practice options list exams/topics  — banks,lectures,drills,weakTopics
 PASS  attempt served without answer key
 PASS  tutor mode reveals rationale immediately
 PASS  tutor mode blocks changing an answer
-PASS  finish returns score matching tutor feedback  — 2/10
-PASS  score report has per-topic breakdown and reviewable questions  — 4 topics
-PASS  XP awarded = 5/correct + 10 (+15 if ≥80%)  — xp 20
-PASS  retake-missed contains exactly the missed questions  — 8
+PASS  finish returns score matching tutor feedback  — 4/10
+PASS  score report has per-topic breakdown and reviewable questions  — 3 topics
+PASS  XP awarded = 5/correct + 10 (+15 if ≥80%)  — xp 30
+PASS  retake-missed contains exactly the missed questions  — 6
 PASS  retake stems match missed stems
 PASS  exam mode gives no feedback while testing
 PASS  attempts saved in history  — 2
