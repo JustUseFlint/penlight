@@ -234,12 +234,13 @@ def cmd_transcribe(url, model_name):
     try:
         progress("transcribing", 0.05, "Downloading audio")
         opts = ydl_opts({
-            "skip_download": False, "format": "bestaudio/best",
+            "skip_download": False, "format": "bestaudio/best", "noprogress": True,
             "outtmpl": os.path.join(tmp, "audio.%(ext)s"),
             "match_filter": yt_dlp.utils.match_filter_func("duration < 5400"),
         })
         try:
-            with yt_dlp.YoutubeDL(opts) as ydl:
+            import contextlib
+            with contextlib.redirect_stdout(sys.stderr), yt_dlp.YoutubeDL(opts) as ydl:
                 info = ydl.extract_info(url, download=True)
         except Exception as e:  # noqa
             code, msg = classify_error(str(e))
@@ -258,7 +259,11 @@ def cmd_transcribe(url, model_name):
             model = WhisperModel(model_name, device="cpu", compute_type="int8")
         except Exception as e:  # noqa
             fail("whisper_unavailable", f"Couldn't load the speech model ({model_name}): {str(e)[:160]}. Paste the transcript instead.")
-        segments, tinfo = model.transcribe(wav, vad_filter=True, beam_size=1, language="en" if os.environ.get("WHISPER_LANG", "en") == "en" else None)
+        import wave
+        import numpy as np
+        with wave.open(wav, 'rb') as wf:
+            audio = np.frombuffer(wf.readframes(wf.getnframes()), dtype=np.int16).astype(np.float32) / 32768.0
+        segments, tinfo = model.transcribe(audio, vad_filter=True, beam_size=1, language="en" if os.environ.get("WHISPER_LANG", "en") == "en" else None)
         dur = max(float(info.get("duration") or tinfo.duration or 1), 1)
         segs = []
         for s in segments:
