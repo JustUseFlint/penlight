@@ -118,13 +118,24 @@ li.key{list-style:none;margin-left:-20px;padding:6px 10px 6px 12px;background:#f
 </div></body></html>`;
 }
 
-declare global { var __pwBrowser: import('playwright').Browser | undefined }
+declare global { var __pwBrowser: import('playwright').Browser | undefined; var __pdfQueue: Promise<unknown> | undefined }
+
+/** PDF_LOW_MEMORY=1 (set on small free hosts): one PDF at a time, a fresh Chromium per PDF that is closed afterwards. */
+const LOW_MEM = process.env.PDF_LOW_MEMORY === '1';
+const CHROME_ARGS = ['--no-sandbox', '--disable-dev-shm-usage', '--disable-gpu', '--disable-extensions', '--mute-audio'];
+
+export function renderPdf(html: string, title: string): Promise<Buffer> {
+  if (!LOW_MEM) return renderPdfInner(html, title);
+  const run = (globalThis.__pdfQueue ?? Promise.resolve()).catch(() => undefined).then(() => renderPdfInner(html, title));
+  globalThis.__pdfQueue = run;
+  return run;
+}
 
 /** Cover is rendered separately (full bleed, no footer); the body gets "Page X of N" numbering. */
-export async function renderPdf(html: string, title: string): Promise<Buffer> {
+async function renderPdfInner(html: string, title: string): Promise<Buffer> {
   const { chromium } = await import('playwright');
   const { PDFDocument } = await import('pdf-lib');
-  if (!globalThis.__pwBrowser || !globalThis.__pwBrowser.isConnected()) globalThis.__pwBrowser = await chromium.launch({ args: ['--no-sandbox'] });
+  if (!globalThis.__pwBrowser || !globalThis.__pwBrowser.isConnected()) globalThis.__pwBrowser = await chromium.launch({ args: CHROME_ARGS });
   const coverM = html.match(/<div class="cover">[\s\S]*?<\/div>\s*<div class="body">/);
   const coverHtml = html.replace(/<div class="body">[\s\S]*$/, '</body></html>').replace('@page{size:Letter;margin:20mm 17mm 22mm}', '@page{size:Letter;margin:0}');
   const bodyHtml = html.replace(/<div class="cover">[\s\S]*?<\/div>\s*<div class="body">/, '<div class="body">');
@@ -139,7 +150,13 @@ export async function renderPdf(html: string, title: string): Promise<Buffer> {
       return Buffer.from(await page.pdf({ format: 'Letter', printBackground: true, preferCSSPageSize: true, displayHeaderFooter: footer, headerTemplate: '<div></div>', footerTemplate: footer ? f : '<div></div>' }));
     } finally { await ctx.close(); }
   };
-  const [cover, body] = await Promise.all([render(coverHtml, false), render(bodyHtml, true)]);
+  let cover: Buffer, body: Buffer;
+  try {
+    if (LOW_MEM) { cover = await render(coverHtml, false); body = await render(bodyHtml, true); }
+    else [cover, body] = await Promise.all([render(coverHtml, false), render(bodyHtml, true)]);
+  } finally {
+    if (LOW_MEM) { const b = globalThis.__pwBrowser; globalThis.__pwBrowser = undefined; await b?.close().catch(() => undefined); }
+  }
   const out = await PDFDocument.create();
   for (const buf of [cover, body]) {
     const doc = await PDFDocument.load(buf);

@@ -1,0 +1,29 @@
+# Render Blueprint — deploys the full Penlight server from this repo on Render's FREE web plan (no credit card).
+# One click: https://render.com/deploy?repo=https://github.com/JustUseFlint/penlight
+services:
+  - type: web
+    name: penlight
+    runtime: docker
+    plan: free
+    healthCheckPath: /api/health
+    autoDeploy: true
+    envVars:
+      # Encrypts the LLM API key a user saves in Settings. Generated once by Render; never committed.
+      - key: APP_SECRET
+        generateValue: true
+      # Durable storage for accounts/progress. Render's free disk is ephemeral, so Penlight snapshots its SQLite file
+      # to any Postgres you give it (free Neon: https://console.neon.tech). Paste the postgres:// URL.
+      # Leave empty (or "none") to run without durability: data is lost whenever the free instance spins down.
+      - key: PERSIST_DATABASE_URL
+        sync: false
+      - key: PDF_LOW_MEMORY
+        value: "1"
+      - key: DISABLE_WHISPER
+        value: "1"
+      - key: NODE_OPTIONS
+        value: --max-old-space-size=200
+      - key: DATA_DIR
+        value: /app/data
+      # Optional: base64 of a Netscape cookies.txt from a THROWAWAY Google account, to get past YouTube's bot check.
+      - key: YTDLP_COOKIES_B64
+        sync: false

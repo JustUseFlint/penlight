@@ -4,15 +4,43 @@ Paste a lecture link (YouTube or anything yt-dlp supports) or a transcript. Penl
 study guide (in-app + premium PDF), spaced-repetition flashcards, practice tests and learning games, then tracks your progress
 toward the TEAS 7 and NCLEX-RN with premade study programs.
 
+[![Deploy to Render](https://render.com/images/deploy-to-render-button.svg)](https://render.com/deploy?repo=https://github.com/JustUseFlint/penlight)
+
+![Penlight home](docs/screenshots/home-desktop.png)
+
 > **Study aid only.** Penlight is exam-prep support. It is not clinical guidance, not medical advice, and its readiness gauges are
 > estimates, not predictors. Content was self-reviewed (see `docs/medical-review.md`) but has **not** been reviewed by a licensed clinician.
+
+## Deploy it (free, no credit card)
+
+**Recommended: Render free web service** (verified against Render's docs, October 2026): public `https://<name>.onrender.com` URL, no card, Docker runtime.
+
+1. Click **Deploy to Render** above (or Render dashboard → *New → Blueprint* → this repo). Sign in with GitHub.
+2. When asked for `PERSIST_DATABASE_URL`, paste a free Postgres URL (see below). `APP_SECRET` is generated for you.
+3. Wait for the first build (about 10 to 15 minutes), then open the URL. `https://<name>.onrender.com/api/health` should say `{"ok":true}`.
+
+**Why a Postgres URL?** Render's free disk is ephemeral and the instance spins down after 15 minutes idle, which would erase the SQLite file
+(accounts, progress, saved study sets). Penlight keeps using plain SQLite, and `scripts/start.mjs` snapshots the file to Postgres every
+30 seconds when it changes (and on shutdown) and restores it on boot. Create a free database at <https://console.neon.tech> (Neon free plan: no card; the database sleeps when idle, which is fine) or use a free Supabase Postgres, and paste its `postgres://…` connection string.
+Without it the app still runs, but data resets on every spin-down.
+
+**Free-tier realities (read these):**
+- **Cold start:** after 15 minutes without traffic the instance sleeps; the next visit takes about a minute to wake.
+- **512 MB RAM / 0.1 CPU:** PDF export uses Chromium in a one-at-a-time low-memory mode; if it ever runs out of memory the app falls back to a print-ready
+  page ("Save as PDF" in your browser). Whisper (audio transcription) is disabled on the free host.
+- **YouTube may block the host's datacenter IP** ("Sign in to confirm you're not a bot"). Pasting a transcript or uploading `.txt/.srt/.vtt` always works.
+  Optional workaround: set `YTDLP_COOKIES_B64` to a base64 `cookies.txt` from a **throwaway** Google account.
+- 750 free instance hours per month per Render workspace.
+
+Other hosts: any Docker host works (`docker build -t penlight . && docker run -p 3100:3100 -e APP_SECRET=$(openssl rand -hex 32) -v penlight-data:/app/data penlight`).
+Hugging Face Docker Spaces now require a paid PRO plan; see `docs/DEPLOY.md` for the full comparison.
 
 ## Quick start
 
 ```bash
 npm install
 npm run build
-PORT=3100 npm start            # http://localhost:3100
+PORT=3100 npm start            # http://localhost:3100 (runs scripts/start.mjs)
 ```
 
 Optional (video fallback when a video has no captions):

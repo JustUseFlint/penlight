@@ -84,6 +84,11 @@ export default function LecturePage({ params }: { params: Promise<{ id: string }
       const r = await fetch(`/api/lectures/${id}/pdf`);
       if (!r.ok) throw new Error((await r.json()).error || 'PDF failed');
       const blob = await r.blob();
+      if ((r.headers.get('content-type') || '').includes('text/html')) { // server fallback: print-ready page
+        const w = window.open(URL.createObjectURL(blob), '_blank');
+        toast({ title: w ? 'Opened a print view: choose Save as PDF.' : 'Allow pop-ups to open the print view.', kind: 'info' });
+        return;
+      }
       const a = document.createElement('a'); a.href = URL.createObjectURL(blob); a.download = (r.headers.get('content-disposition')?.match(/filename="(.+)"/)?.[1]) || 'study-guide.pdf'; a.click();
       setTimeout(() => URL.revokeObjectURL(a.href), 5000);
     } catch (e) { toast({ title: (e as Error).message, kind: 'error' }); } finally { setPdfBusy(false); }

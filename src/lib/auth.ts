@@ -94,6 +94,8 @@ export class AuthError extends Error {}
 
 /** AES-256-GCM helpers for the API key stored in the local DB. */
 function secretKey(): Buffer {
+  // Hosted deployments: derive the AES key from the APP_SECRET env var (never stored on disk or committed).
+  if (process.env.APP_SECRET) return crypto.createHash('sha256').update('penlight:' + process.env.APP_SECRET).digest();
   // eslint-disable-next-line @typescript-eslint/no-require-imports
   const fs = require('node:fs') as typeof import('node:fs');
   // eslint-disable-next-line @typescript-eslint/no-require-imports
