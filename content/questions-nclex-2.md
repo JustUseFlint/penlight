@@ -58,7 +58,7 @@ Q: A client taking lithium has a level of 1.8 mEq/L and reports vomiting, diarrh
 + hold the medication and notify the provider.
 - encourage the client to restrict fluids.
 - reassure the client.
-R: A level above 1.2 mEq/L with these signs indicates lithium toxicity. Hold the drug and notify the provider.
+R: The therapeutic range is about 0.6 to 1.2 mEq/L. A level of 1.8 with vomiting, diarrhea, and coarse tremor indicates lithium toxicity (signs usually appear above 1.5). Hold the drug and notify the provider.
 Q: A client taking an MAOI should avoid which food?
 - Apples
 + Aged cheese

@@ -147,7 +147,7 @@ function StudyInner() {
             ))}
           </div>
         ) : (
-          <Button size="lg" className="w-full" onClick={() => setFlipped(true)}>Show answer <kbd className="hidden md:inline ml-2 text-xs bg-white/20 rounded px-1.5 py-0.5">Space</kbd></Button>
+          <Button size="lg" className="w-full" onClick={() => setFlipped(true)}>Show answer <kbd className="hidden md:inline ml-2 text-xs bg-black/25 rounded px-1.5 py-0.5">Space</kbd></Button>
         )}
       </div>
       <p className="text-center text-xs text-muted mt-4 flex items-center justify-center gap-1.5"><Zap size={12} aria-hidden /> Keys: Space flips · 1 to 4 grade · ← still learning · → I know it</p>

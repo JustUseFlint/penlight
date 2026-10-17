@@ -185,7 +185,7 @@ Respiratory depression and pinpoint pupils. Naloxone reverses it; monitor becaus
 ## Positioning
 - **Semi-Fowler's (30 to 45 degrees)** for aspiration risk and feeding. **Trendelenburg** is rarely used. **Sims** for enemas. **Prone** for some back care.
 ## Mobility
-- Use a **gait belt**; assist the client toward their stronger side when using a cane (hold the cane in the hand opposite the weaker leg).
+- Use a **gait belt**. The client holds the cane in the hand on the **stronger** side (opposite the weaker leg), and the nurse stands on the client's weaker side.
 > Must know: Stage 1 pressure injuries are non-blanchable. Blanching redness is not Stage 1.
 
 @lesson BC2 | Nutrition and Elimination | Basic Care & Comfort | 7

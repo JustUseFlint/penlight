@@ -67,7 +67,7 @@ describe('lessons & programs integrity', () => {
       expect(days.length).toBeGreaterThanOrEqual(10);
       const taskIds = new Set<string>();
       for (const d of days) {
-        expect(requiredTasks(d).length, `${p.id} day ${d.day}`).toBeGreaterThan(0);
+        expect(requiredTasks(d).length, `${p.id} day ${d.n}`).toBeGreaterThan(0);
         for (const t of d.tasks) {
           expect(taskIds.has(t.id), t.id).toBe(false); taskIds.add(t.id);
           for (const tg of t.tags ?? []) expect(lessons.has(tg), `${p.id}:${t.id} tag ${tg}`).toBe(true);

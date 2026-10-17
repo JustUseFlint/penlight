@@ -59,7 +59,7 @@ await run('flashcards', async () => {
 
 // ---------- practice test (tutor)
 await run('practice', async () => {
-  await page.goto(BASE + '/practice'); await page.getByRole('button', { name: /Mixed TEAS/ }).click(); await page.getByRole('button', { name: /Start test/ }).first().click();
+  await page.goto(BASE + '/practice'); await page.getByRole('button', { name: /Mixed TEAS/ }).click(); await page.getByRole('radio', { name: '5', exact: true }).click(); await page.getByRole('button', { name: /Start test/ }).first().click();
   await page.waitForURL(/\/practice\/[a-f0-9]+/); 
   for (let i = 0; i < 5; i++) {
     await page.locator('[role=radio][aria-checked], [role=checkbox][aria-checked]').first().waitFor();
@@ -112,7 +112,7 @@ await run('gap', async () => {
     await page.getByRole('group', { name: 'Word bank' }).waitFor();
     const it = items[i]; const bad = i === 0;
     const target = bad ? it.options.find((o) => o !== it.answer) : it.answer;
-    await page.getByRole('group', { name: 'Word bank' }).getByRole('button', { name: target, exact: true }).click();
+    await page.getByRole('group', { name: 'Word bank' }).getByRole('button', { name: new RegExp('(^|\\s)' + target.replace(/[.*+?^${}()|[\]\\]/g, '\\$&') + '$') }).click();
     await page.getByText(/Correct\.|Not quite\./).waitFor();
     if (i === 0) T('Fill the Gap flags a wrong answer and explains', (await page.locator('body').innerText()).includes('Not quite.'));
     await page.getByRole('button', { name: /^(Next|Finish)$/ }).click();

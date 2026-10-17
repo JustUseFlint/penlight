@@ -86,23 +86,25 @@ export function gameData(userId: string, game: GameId, src: GameSource) {
   }
   if (game === 'gap') {
     type Item = { sentence: string; answer: string; options: string[]; explanation: string };
-    const raw: { before: string; word: string; after: string; ex: string }[] = [];
+    const raw: { before: string; word: string; after: string; ex: string; topic: string }[] = [];
     for (const c of cards) {
       if (c.type === 'cloze') {
         const a = clozeAnswer(c.front);
         if (!a) continue;
         const i = c.front.search(/\{\{c1::/);
         const mm = c.front.match(/\{\{c1::.+?(?:::.+?)?\}\}/)!;
-        raw.push({ before: plain(c.front.slice(0, i)), word: a, after: plain(c.front.slice(i + mm[0].length)), ex: plain(c.front) });
+        raw.push({ before: plain(c.front.slice(0, i)), word: a, after: plain(c.front.slice(i + mm[0].length)), ex: plain(c.front), topic: c.topic ?? '' });
       } else if (c.type !== 'qa') {
         const b = pickBlank(c.back, c.front);
-        if (b) raw.push({ ...b, ex: `${c.front}: ${c.back}` });
+        if (b) raw.push({ ...b, ex: `${c.front}: ${c.back}`, topic: c.topic ?? '' });
       }
     }
     const picked = shuffle(raw, r).slice(0, 14);
-    const bankWords = raw.map((x) => x.word);
     const items: Item[] = picked.map((x) => {
-      const distract = shuffle([...new Set(bankWords.filter((w) => w.toLowerCase() !== x.word.toLowerCase() && Math.abs(w.length - x.word.length) <= 4))], r).slice(0, 3);
+      const ok = (x2: { word: string; topic: string }) => x2.word.toLowerCase() !== x.word.toLowerCase() && Math.abs(x2.word.length - x.word.length) <= 5;
+      const same = raw.filter((y) => ok(y) && y.topic && y.topic === x.topic).map((y) => y.word);
+      const other = raw.filter((y) => ok(y)).map((y) => y.word);
+      const distract = [...shuffle([...new Set(same)], r), ...shuffle([...new Set(other)], r)].filter((w, k, a) => a.findIndex((z) => z.toLowerCase() === w.toLowerCase()) === k).slice(0, 3);
       return { sentence: `${x.before}____${x.after}`, answer: x.word, options: shuffle([x.word, ...distract], r), explanation: x.ex };
     }).filter((i) => i.options.length >= 3);
     return { game, label, items };

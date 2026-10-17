@@ -160,7 +160,7 @@ Hormones travel in blood to target cells and are controlled by feedback.
 - **Asthma:** reversible airway inflammation and bronchospasm; wheezing, cough, tight chest; avoid triggers; use a peak flow meter.
 - **Pneumonia:** fever, productive cough, crackles; early antibiotics, hydration, deep breathing, oxygen. Aspiration risk in dysphagia.
 - **Tuberculosis:** airborne precautions; multi-drug therapy for 6 months or longer; adherence is critical.
-- **Pneumothorax and chest tubes:** keep the drainage system **below chest level**; intermittent bubbling in the water-seal chamber is expected with air leak; if the tube disconnects from the drainage system, put the end in sterile water and call for help; if the tube is pulled out of the chest, cover the site with a sterile dressing taped on three sides and call.
+- **Pneumothorax and chest tubes:** keep the drainage system **below chest level**; intermittent bubbling in the water-seal chamber (with exhalation or coughing) can be expected early with a pneumothorax, but **continuous** bubbling suggests a persistent air leak that needs evaluation; if the tube disconnects from the drainage system, put the end in sterile water and call for help; if the tube is pulled out of the chest, cover the site with a sterile occlusive dressing as your facility policy directs (often taped on three sides) and call for help right away.
 > Must know: Keep the chest drainage system upright and below the level of the chest.
 
 @lesson MS3 | Diabetes and Thyroid Disorders | Med-Surg Basics | 7

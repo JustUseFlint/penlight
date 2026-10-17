@@ -461,9 +461,9 @@ Q: Which choice lists exactly the words that must be capitalized in this sentenc
 - My, Aunt, Dr., Lee, Chicago
 - Dr., Lee, Chicago, Summer
 R: Capitalize the first word of the sentence, titles before names, and proper nouns. Seasons are not capitalized.
-Q: Which sentence has the correct pronoun-antecedent agreement?
-- Each nurse brought their badge.
-- A nurse should bring their badge.
-+ Each nurse brought her or his badge.
-- Nurses should bring his badge.
-R: "Each nurse" is singular, so the singular pronoun phrase "her or his" is used in formal TEAS-style grammar. Plural subjects use "their."
+Q: Which sentence has correct pronoun-antecedent agreement?
++ The hospital updated its visitor policy.
+- The hospital updated their visitor policy.
+- The hospital updated they visitor policy.
+- The hospital updated it's visitor policy.
+R: "Hospital" is a singular noun, so the possessive pronoun must be singular: "its" (no apostrophe). "It's" means "it is."

@@ -338,7 +338,7 @@ Use formal, standard English in professional writing; avoid slang and contractio
 
 @lesson E5 | Pronouns, Modifiers, Tense, and Capitalization | English & Language | 6
 ## Pronouns
-- Pronouns must agree with their **antecedent** in number and person: "Each nurse brought **her or his** badge."
+- Pronouns must agree with their **antecedent** in number and person: "The hospital updated **its** visitor policy" (a singular noun takes a singular pronoun; **it's** means "it is").
 - Subject pronouns (I, he, she, we, they) act; object pronouns (me, him, her, us, them) receive: "Between you and **me**."
 - **Who** = subject; **whom** = object.
 ## Modifiers
