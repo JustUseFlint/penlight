@@ -6,7 +6,8 @@
 - [x] YouTube real URLs: tested; this box IP is bot-blocked by YouTube now (honest limitation; YTDLP_COOKIES supported)
 - [x] Whisper fallback tested on archive.org URL (see below)
 - [x] vitest suites (58 tests green) + scripts/mock-llm.mjs
-- [ ] Playwright e2e (flow, games, accounts, programs, SRS days)
+- [x] API e2e on fresh DB (scripts/e2e-api.mjs, 70/70; docs/e2e-api-results.txt): samples, PDF, SRS over simulated days, tests, games, programs, accounts, AI mock
+- [ ] Playwright UI e2e (flow, games, accounts, programs, SRS days)
 - [ ] Screenshots desktop+mobile -> docs/screenshots
 - [ ] Medical accuracy review pass
 - [ ] README + Dockerfile

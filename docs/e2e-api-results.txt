@@ -1,0 +1,72 @@
+PASS  guest profile auto-created
+PASS  fresh dashboard has zero XP and no readiness  — xp,streak,today,week,cards,heatmap,mastery,readiness,trend,weak,recent,achievements,totals,due
+PASS  sample "cardiac-conduction" ingests (Lite)
+PASS    cardiac-conduction: guide + counts + Lite label  — {"cards":47,"questions":17}
+PASS    cardiac-conduction: PDF served  — 319136 bytes
+PASS  sample "medication-safety" ingests (Lite)
+PASS    medication-safety: guide + counts + Lite label  — {"cards":47,"questions":16}
+PASS    medication-safety: PDF served  — 320101 bytes
+PASS  sample "potassium-sodium" ingests (Lite)
+PASS    potassium-sodium: guide + counts + Lite label  — {"cards":41,"questions":15}
+PASS    potassium-sodium: PDF served  — 300251 bytes
+PASS  pasted transcript ingests
+PASS  upload .srt accepted  — {"jobId":"cd676926bdee4ed8","lectureId":"ad4bf6d2364740fc"}
+PASS  uploaded .srt ingests
+PASS  private-network URL rejected (SSRF guard)
+PASS  too-short paste gives a friendly job error or 400
+PASS  new queue respects the daily new-card limit (20)  — {"due":0,"new":20,"newAvailable":47,"total":47,"newAllowance":20}
+PASS  after 20 new reviews, no more new cards today; "Again" cards are due within the session  — {"due":4,"new":0,"newAvailable":27,"total":47,"newAllowance":0}
+PASS  day +1: Good/Hard cards (1d) + Again cards are due, 20 more new allowed  — {"due":20,"new":20,"newAvailable":27,"total":47,"newAllowance":20}
+PASS  nav due badge reflects due count  — {"due":20,"newReady":20}
+PASS  day +2: nothing from the first batch is due yet except lapsed relearns (intervals grew)  — {"due":4,"new":20,"newAvailable":27,"total":47,"newAllowance":20}
+PASS  day +9: graduated cards (6d interval) are due again  — {"due":20,"new":20,"newAvailable":27,"total":47,"newAllowance":20}
+PASS  Anki CSV export has the edited card  — #separator:comma⏎#html:true⏎#notetype:Basic⏎#deck:My custom deck⏎#tags column:3⏎
+PASS  deleted card gone from export
+PASS  practice options list exams/topics  — banks,lectures,drills,weakTopics
+PASS  attempt served without answer key
+PASS  tutor mode reveals rationale immediately
+PASS  tutor mode blocks changing an answer
+PASS  finish returns score matching tutor feedback  — 2/10
+PASS  score report has per-topic breakdown and reviewable questions  — 4 topics
+PASS  XP awarded = 5/correct + 10 (+15 if ≥80%)  — xp 20
+PASS  retake-missed contains exactly the missed questions  — 8
+PASS  retake stems match missed stems
+PASS  exam mode gives no feedback while testing
+PASS  attempts saved in history  — 2
+PASS  timed dosage drill attempt has a time limit and numeric questions  — 450s
+PASS  at least 4 games listed  — match,speed,gap,sequence
+PASS  game "match" data builds from a lecture  — game,label,rounds,available
+PASS  game "match" result awards XP  — xp 44
+PASS  game "speed" data builds from a lecture  — game,label,items,seconds
+PASS  game "speed" result awards XP  — xp 44
+PASS  game "gap" data builds from a lecture  — game,label,items
+PASS  game "gap" result awards XP  — xp 44
+PASS  game "sequence" data builds from a lecture  — game,label,puzzles,note
+PASS  game "sequence" result awards XP  — xp 44
+PASS  8 programs listed  — teas-6w,teas-3w,nclex-8w,core-ap,core-pharm,core-medsurg,core-fund,dosage-2w
+PASS  dosage-2w: first 10 days all marked complete  — done,done,done,done,done,done,done,done,done,done
+PASS  dosage-2w reaches 100%  — 100%
+PASS  teas-3w: first 3 days all marked complete  — done,done,done
+PASS  teas-3w progress is partial after 3 of 15 days  — 20%
+PASS  dashboard reflects activity (XP>0, activity feed, mastery, trend)  — xp,streak,today,week,cards,heatmap,mastery,readiness,trend,weak,recent,achievements,totals,due
+PASS  signup validates email/password
+PASS  guest upgrades in place to account
+PASS  progress kept after signup
+PASS  XP unchanged by upgrade
+PASS  after logout a fresh guest has no progress
+PASS  wrong password rejected
+PASS  login restores progress
+PASS  another user can't read this user's attempt
+PASS  no key configured initially → Lite
+PASS  connection test fails clearly with a bad key  — {"ok":false,"message":"LLM request failed (401): {\"error\":{\"message\":\"invalid api key\"}}"}
+PASS  saved key never returned to the client  — ••••-key
+PASS  GET settings does not leak the key
+PASS  key stored encrypted at rest (not plaintext in DB file)
+PASS  connection test passes against mock  — Connected. Model replied: “OK”.
+PASS  AI-mode ingest completes and is labelled "ai"  — ai
+PASS  AI output includes the mock sections/cards/questions (invalid Q dropped)  — {"cards":20,"questions":11}
+PASS  forcing Lite mode overrides a configured key
+PASS  unreachable provider falls back to Lite with a notice  — lite
+PASS  key can be removed
+
+70/70 checks passed
