@@ -4,7 +4,17 @@ import { useCallback, useEffect, useRef, useState } from 'react';
 export class ApiError extends Error { constructor(msg: string, public status: number) { super(msg); } }
 
 export async function api<T = unknown>(url: string, opts: { method?: string; body?: unknown } = {}): Promise<T> {
-  const res = await fetch(url, { method: opts.method || (opts.body !== undefined ? 'POST' : 'GET'), headers: opts.body !== undefined ? { 'content-type': 'application/json' } : undefined, body: opts.body !== undefined ? JSON.stringify(opts.body) : undefined, cache: 'no-store' });
+  const init: RequestInit = { method: opts.method || (opts.body !== undefined ? 'POST' : 'GET'), headers: opts.body !== undefined ? { 'content-type': 'application/json' } : undefined, body: opts.body !== undefined ? JSON.stringify(opts.body) : undefined, cache: 'no-store' };
+  // The free host sleeps when idle and answers 502/503/504 (or drops the connection) for a few seconds while it wakes up.
+  // Those never reached the app, so retrying is safe for every method.
+  let res: Response | null = null;
+  for (let attempt = 0; attempt < 5; attempt++) {
+    try { res = await fetch(url, init); } catch { res = null; }
+    if (res && ![502, 503, 504].includes(res.status)) break;
+    if (attempt < 4) await new Promise((r) => setTimeout(r, 1500 + attempt * 1500));
+  }
+  if (!res) throw new ApiError('Could not reach the server. Check your connection and try again.', 0);
+  if ([502, 503, 504].includes(res.status)) throw new ApiError('The server is still waking up (the free host sleeps when idle). Wait a few seconds and try again.', res.status);
   const data = await res.json().catch(() => ({}));
   if (!res.ok) throw new ApiError((data as { error?: string }).error || `Request failed (${res.status})`, res.status);
   return data as T;

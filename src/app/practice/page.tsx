@@ -1,9 +1,10 @@
 'use client';
-import { useState } from 'react';
+import { useRef, useState } from 'react';
+import { useRouter } from 'next/navigation';
 import Link from 'next/link';
-import { Calculator, Crosshair, FileText, Layers, Target } from 'lucide-react';
-import { cx, fmtDur, timeAgo, useApi } from '@/lib/client';
-import { Badge, Disclaimer, ErrorBox, PageHeader, SkeletonCards } from '@/components/ui';
+import { Calculator, ChevronDown, Crosshair, FileText, Layers, Play, Target } from 'lucide-react';
+import { api, cx, fmtDur, timeAgo, useApi } from '@/lib/client';
+import { Badge, Button, Disclaimer, ErrorBox, PageHeader, SkeletonCards } from '@/components/ui';
 import { TestLauncher, type LaunchScope } from '@/components/TestLauncher';
 
 interface Opts { banks: { exam: string; topic: string; n: number }[]; lectures: { id: string; title: string; n: number }[]; drills: { id: string; label: string }[]; weakTopics: string[] }
@@ -17,6 +18,20 @@ export default function PracticePage() {
   const [sel, setSel] = useState<Tile | null>(null);
   const [drills, setDrills] = useState<string[]>(['oral', 'weight', 'iv-rate']);
   const o = opts.data;
+  const router = useRouter();
+  const panel = useRef<HTMLDivElement>(null);
+  const [quickBusy, setQuickBusy] = useState(false);
+  const [quickErr, setQuickErr] = useState<string | null>(null);
+  const choose = (t: Tile) => {
+    setSel(t); setQuickErr(null);
+    // On phones the launcher sits below all the topics, so bring it into view
+    if (typeof window !== 'undefined' && !window.matchMedia('(min-width: 1024px)').matches) setTimeout(() => panel.current?.scrollIntoView({ behavior: 'smooth', block: 'center' }), 60);
+  };
+  async function quickStart(t: Tile) {
+    setQuickBusy(true); setQuickErr(null);
+    try { const a = await api<{ id: string }>('/api/attempts', { body: { title: `${t.title} practice`, scope: t.key === 'drill' ? { drills } : t.scope, count: 10, mode: 'tutor', timed: false } }); router.push(`/practice/${a.id}`); }
+    catch (e) { setQuickErr((e as Error).message); setQuickBusy(false); }
+  }
   const count = (exam: string, topic?: string) => o?.banks.filter((b) => b.exam === exam && (!topic || b.topic === topic)).reduce((a, b) => a + b.n, 0) ?? 0;
   const groups: { title: string; blurb: string; tiles: Tile[] }[] = o ? [
     { title: 'Smart practice', blurb: 'Let Penlight pick what you most need.', tiles: [
@@ -47,14 +62,14 @@ export default function PracticePage() {
       <PageHeader title="Practice" subtitle="Exam-style questions with a rationale for every answer. Choose a topic, then set up your test." />
       {opts.error && <ErrorBox message={opts.error} retry={opts.reload} />}
       {opts.loading ? <SkeletonCards n={6} h="h-24" /> : (
-        <div className="grid lg:grid-cols-[1fr_380px] gap-8 items-start">
+        <div className="grid grid-cols-[minmax(0,1fr)] lg:grid-cols-[minmax(0,1fr)_380px] gap-8 items-start">
           <div className="space-y-8 min-w-0">
             {groups.map((g) => (
               <section key={g.title} aria-labelledby={'g-' + g.title}>
                 <h2 id={'g-' + g.title} className="text-xl font-extrabold">{g.title}</h2><p className="text-sm text-muted mb-3">{g.blurb}</p>
                 <div className="grid gap-3 sm:grid-cols-2">
                   {g.tiles.map((t) => (
-                    <button key={t.key} onClick={() => setSel(t)} aria-pressed={sel?.key === t.key} className={cx('card card-hover text-left p-4 flex items-center gap-3 border-2', sel?.key === t.key ? '!border-brand-500 bg-brand-50/60' : 'border-transparent')}>
+                    <button key={t.key} onClick={() => choose(t)} aria-pressed={sel?.key === t.key} className={cx('card card-hover text-left p-4 flex items-center gap-3 border-2', sel?.key === t.key ? '!border-brand-500 bg-brand-50/60' : 'border-transparent')}>
                       <span className="h-11 w-11 rounded-xl bg-brand-50 text-brand-700 grid place-items-center shrink-0"><t.icon size={20} aria-hidden /></span>
                       <span className="min-w-0"><span className="block font-bold leading-tight">{t.title}</span><span className="block text-sm text-muted leading-snug">{t.sub}{t.n !== undefined ? ` · ${t.n} questions` : ''}</span></span>
                     </button>
@@ -63,8 +78,8 @@ export default function PracticePage() {
               </section>
             ))}
           </div>
-          <aside className="lg:sticky lg:top-24 space-y-4">
-            <div className="card p-5 border-brand-300">
+          <aside className="lg:sticky lg:top-24 space-y-4 min-w-0">
+            <div ref={panel} className="card p-5 border-brand-300 scroll-mt-24">
               <div className="eyebrow mb-1">Your test</div>
               <div className="font-display text-xl font-bold mb-4">{active ? active.title : 'Choose a topic to begin'}</div>
               {active?.key === 'drill' && (
@@ -76,12 +91,19 @@ export default function PracticePage() {
               <div className="eyebrow mb-2">Recent tests</div>
               {atts.data?.attempts.filter((a) => a.status === 'finished').length ? (
                 <ul className="divide-y divide-line">{atts.data.attempts.slice(0, 5).map((a) => (
-                  <li key={a.id}><Link href={`/practice/${a.id}`} className="py-2.5 flex items-center gap-3 hover:text-brand-700"><span className="min-w-0 flex-1"><span className="block text-sm font-semibold truncate">{a.title}</span><span className="block text-xs text-muted">{timeAgo(a.started_at)} · {a.status === 'finished' ? fmtDur(a.duration_sec) : 'in progress'}</span></span>
+                  <li key={a.id}><Link href={`/practice/${a.id}`} className="py-2.5 flex items-center gap-3 min-w-0 hover:text-brand-700"><span className="min-w-0 flex-1"><span className="block text-sm font-semibold truncate">{a.title}</span><span className="block text-xs text-muted">{timeAgo(a.started_at)} · {a.status === 'finished' ? fmtDur(a.duration_sec) : 'in progress'}</span></span>
                     {a.status === 'finished' ? <Badge tone={(a.score ?? 0) / a.total >= 0.7 ? 'brand' : 'coral'}>{a.score}/{a.total}</Badge> : <Badge tone="sun">Resume</Badge>}</Link></li>
                 ))}</ul>
               ) : <p className="text-sm text-muted flex gap-2"><Target size={16} className="shrink-0 mt-0.5" aria-hidden /> Your finished tests will show up here.</p>}
             </div>
           </aside>
+        </div>
+      )}
+      {active && (
+        <div className="lg:hidden fixed inset-x-3 bottom-[calc(4.75rem+env(safe-area-inset-bottom))] z-30 rounded-2xl bg-surface border border-brand-300 shadow-pop p-3 flex items-center gap-3 animate-rise" role="region" aria-label="Selected test">
+          <div className="min-w-0 flex-1"><div className="text-xs font-bold text-muted">Selected</div><div className="font-bold truncate">{active.title}</div>{quickErr && <div role="alert" className="text-xs font-semibold text-danger-600">{quickErr}</div>}</div>
+          <button onClick={() => panel.current?.scrollIntoView({ behavior: 'smooth', block: 'center' })} className="h-11 px-3 rounded-xl text-sm font-bold text-brand-700 inline-flex items-center gap-1" aria-label="Customize test options">Options <ChevronDown size={14} aria-hidden /></button>
+          <Button loading={quickBusy} onClick={() => quickStart(active)} aria-label={`Start ${active.title} test now`}><Play size={16} aria-hidden /> Start</Button>
         </div>
       )}
       <Disclaimer className="mt-10 max-w-3xl" />

@@ -25,7 +25,7 @@ function GuideView({ l }: { l: Lecture }) {
   const g = l.guide!;
   const sample = !!l.is_sample;
   return (
-    <div className="grid lg:grid-cols-[1fr_300px] gap-8 items-start">
+    <div className="grid grid-cols-[minmax(0,1fr)] lg:grid-cols-[minmax(0,1fr)_300px] gap-8 items-start">
       <article className="space-y-8 min-w-0">
         <section><p className="text-lg leading-8 border-l-4 border-brand-500 pl-4">{g.overview}</p></section>
         {g.objectives.length > 0 && (

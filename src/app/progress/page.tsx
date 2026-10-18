@@ -37,7 +37,7 @@ export default function ProgressPage() {
         <Stat label="Cards due" value={d.due.due} sub={`${d.due.newReady} new ready`} tone="text-brand-700" />
       </section>
 
-      <section className="grid lg:grid-cols-[2fr_1fr] gap-4" aria-label="Weekly goal and accuracy">
+      <section className="grid grid-cols-[minmax(0,1fr)] lg:grid-cols-[minmax(0,2fr)_minmax(0,1fr)] gap-4" aria-label="Weekly goal and accuracy">
         <div className="card p-5 md:p-6">
           <div className="flex items-center gap-5">
             <Ring value={Math.min(100, (d.week.minutes / d.week.goal) * 100)} size={104} label="Weekly goal progress"><span className="font-display text-xl font-extrabold tnum">{Math.round(Math.min(100, (d.week.minutes / d.week.goal) * 100))}%</span></Ring>
@@ -49,7 +49,7 @@ export default function ProgressPage() {
 
       <section aria-labelledby="ready-h">
         <div className="flex flex-wrap items-center justify-between gap-2 mb-3"><h2 id="ready-h" className="text-2xl font-extrabold">Readiness estimates</h2><Badge tone="gray">Estimates only, not predictors</Badge></div>
-        <div className="grid md:grid-cols-2 gap-4">
+        <div className="grid grid-cols-[minmax(0,1fr)] md:grid-cols-2 gap-4">
           {([['TEAS 7', d.readiness.teas], ['NCLEX-RN', d.readiness.nclex]] as const).map(([name, r]) => (
             <div key={name} className="card p-5 md:p-6">
               <Gauge value={r.pct} label={name} band={r.band} />
@@ -70,11 +70,11 @@ export default function ProgressPage() {
 
       <section aria-labelledby="m-h"><h2 id="m-h" className="text-2xl font-extrabold mb-3">Mastery by topic</h2>
         {d.mastery.length === 0 ? <EmptyState art={<EmptyArt kind="chart" />} title="No mastery data yet" body="Mastery is based on your recent answers in each topic. Practice a few questions to get started." action={<ButtonLink href="/practice">Start practicing</ButtonLink>} /> : (
-          <div className="grid md:grid-cols-2 gap-4">{['teas', 'nclex', 'core', 'dosage', 'lecture'].filter((e) => mastery(e).length).map((e) => (
+          <div className="grid grid-cols-[minmax(0,1fr)] md:grid-cols-2 gap-4">{['teas', 'nclex', 'core', 'dosage', 'lecture'].filter((e) => mastery(e).length).map((e) => (
             <div key={e} className="card p-5"><div className="eyebrow mb-3">{examNames[e]}</div><ul className="space-y-3">{mastery(e).map((m) => <li key={m.topic}><div className="flex justify-between text-sm font-semibold"><span className="truncate pr-2">{m.topic}</span><span className="tnum text-muted shrink-0">{m.mastery}% <span className="font-normal">({m.answered})</span></span></div><Progress value={m.mastery} tone={m.mastery >= 80 ? 'brand' : m.mastery >= 60 ? 'sun' : 'coral'} className="mt-1" label={m.topic} /></li>)}</ul></div>))}</div>)}
       </section>
 
-      <section className="grid lg:grid-cols-[1fr_1fr] gap-4">
+      <section className="grid grid-cols-[minmax(0,1fr)] lg:grid-cols-[minmax(0,1fr)_minmax(0,1fr)] gap-4">
         <div className="card p-5 md:p-6"><h2 className="font-display text-xl font-extrabold mb-4">Study heatmap</h2><Heatmap data={d.heatmap} /></div>
         <div className="card p-5 md:p-6"><h2 className="font-display text-xl font-extrabold mb-3">Recent activity</h2>
           {d.recent.length === 0 ? <p className="text-muted">No activity yet.</p> : <ul className="divide-y divide-line">{d.recent.map((a, i) => <li key={i} className="py-2.5 flex items-center gap-3 text-sm"><span aria-hidden className="text-lg">{KIND[a.kind] || '•'}</span><span className="flex-1 font-medium">{a.label}</span><span className="text-muted tnum shrink-0">{a.xp > 0 && <b className="text-sun-600 mr-2">+{a.xp}</b>}{timeAgo(a.ts)}</span></li>)}</ul>}</div>

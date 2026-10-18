@@ -117,7 +117,9 @@ export default function AttemptPage({ params }: { params: Promise<{ id: string }
 
   const reviewList = useMemo(() => (result?.questions ?? []).map((qq, i) => ({ qq, i })).filter(({ qq }) => filter === 'all' || !qq.isCorrect), [result, filter]);
 
-  if (error) return <ErrorBox message={error} retry={reload} />;
+  if (error) return /not found/i.test(error)
+    ? <div className="max-w-xl mx-auto card p-8 text-center"><h1 className="text-2xl font-extrabold mb-2">This test is no longer here</h1><p className="text-muted mb-5">The free server restarts after it has been idle, which clears tests that were in progress. Nothing is wrong with your account. Start a new test and you will be right back in it.</p><ButtonLink href="/practice">Start a new test</ButtonLink></div>
+    : <ErrorBox message={error} retry={reload} />;
   if (loading || !data) return <div className="max-w-2xl mx-auto space-y-4"><Skeleton className="h-4" /><Skeleton className="h-96" /></div>;
 
   // ---------------------------------------------------------------- results
