@@ -19,13 +19,17 @@ import glob
 import shutil
 import subprocess
 
+# yt-dlp and friends print progress to stdout. Keep the real stdout for our single JSON document only.
+_REAL_STDOUT = sys.stdout
+sys.stdout = sys.stderr
+
 def progress(stage, pct, message=""):
     sys.stderr.write("PROGRESS:" + json.dumps({"stage": stage, "pct": pct, "message": message}) + "\n")
     sys.stderr.flush()
 
 def out(obj):
-    sys.stdout.write(json.dumps(obj))
-    sys.stdout.flush()
+    _REAL_STDOUT.write("\n" + json.dumps(obj) + "\n")
+    _REAL_STDOUT.flush()
 
 def fail(code, message):
     out({"ok": False, "error_code": code, "message": message})
@@ -56,21 +60,57 @@ def classify_error(msg):
     return "failed", msg.strip().splitlines()[-1][:300] if msg.strip() else "Unknown error."
 
 def ydl_opts(extra=None):
-    o = {"quiet": True, "no_warnings": True, "noplaylist": True, "skip_download": True,
-         "socket_timeout": 20, "retries": 2, "playlist_items": "1"}
+    o = {"quiet": True, "no_warnings": True, "noplaylist": True, "skip_download": True, "noprogress": True,
+         "ignore_no_formats_error": True, "socket_timeout": 15, "retries": 1, "extractor_retries": 1, "playlist_items": "1"}
+    if os.environ.get("YTDLP_PROXY"):
+        o["proxy"] = os.environ["YTDLP_PROXY"]
     if os.environ.get("YTDLP_COOKIES"):
         o["cookiefile"] = os.environ["YTDLP_COOKIES"]
     if extra:
         o.update(extra)
     return o
 
+# YouTube serves different "player clients" different bot-check rules. A datacenter IP is often refused by the default
+# web client but still accepted by one of these, so we walk the list until one answers.
+CLIENT_CHAIN = [None, "android_vr", "tv_embedded", "android", "ios", "mweb"]
+
+def client_args(client):
+    return {"extractor_args": {"youtube": {"player_client": [client]}}} if client else {}
+
+def is_youtube(url):
+    return bool(youtube_id(url)) or "youtube.com" in url or "youtu.be" in url
+
 def get_info(url):
     import yt_dlp
-    with yt_dlp.YoutubeDL(ydl_opts()) as ydl:
-        info = ydl.extract_info(url, download=False)
-    if info.get("_type") == "playlist" and info.get("entries"):
-        info = next(e for e in info["entries"] if e)
-    return info
+    chain = CLIENT_CHAIN if is_youtube(url) else [None]
+    last = None
+    for client in chain:
+        try:
+            with yt_dlp.YoutubeDL(ydl_opts(client_args(client))) as ydl:
+                info = ydl.extract_info(url, download=False)
+            if info and info.get("_type") == "playlist" and info.get("entries"):
+                info = next(e for e in info["entries"] if e)
+            if info and info.get("title"):
+                return info
+        except Exception as e:  # noqa
+            last = e
+            if "private video" in str(e).lower() or "has been removed" in str(e).lower():
+                break
+    raise last or RuntimeError("Could not read that video")
+
+def http_get(url, timeout=10, headers=None):
+    import urllib.request
+    req = urllib.request.Request(url, headers={"User-Agent": "Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/124 Safari/537.36", **(headers or {})})
+    with urllib.request.urlopen(req, timeout=timeout) as r:
+        return r.read().decode("utf-8", "ignore")
+
+def oembed_meta(vid):
+    """Title/channel/thumbnail without touching the player (YouTube does not bot-check oEmbed)."""
+    try:
+        d = json.loads(http_get("https://www.youtube.com/oembed?format=json&url=" + "https%3A%2F%2Fwww.youtube.com%2Fwatch%3Fv%3D" + vid, 8))
+        return {"title": d.get("title") or "Untitled lecture", "channel": d.get("author_name"), "thumbnail": d.get("thumbnail_url"), "duration": None, "id": vid, "webpage_url": "https://www.youtube.com/watch?v=" + vid, "language": None}
+    except Exception:
+        return None
 
 def meta_from_info(info):
     thumb = info.get("thumbnail")
@@ -92,9 +132,11 @@ def clean_caption_text(t):
     return re.sub(r"\s+", " ", t).strip()
 
 def parse_vtt(path):
-    segs = []
     with open(path, encoding="utf-8", errors="ignore") as f:
-        content = f.read()
+        return parse_vtt_text(f.read())
+
+def parse_vtt_text(content):
+    segs = []
     ts = re.compile(r"(?:(\d+):)?(\d{2}):(\d{2})[.,](\d{3})\s*-->\s*")
     blocks = re.split(r"\n\s*\n", content)
     last = ""
@@ -156,26 +198,81 @@ def captions_via_api(vid):
 def captions_via_ytdlp(url):
     import yt_dlp
     tmp = tempfile.mkdtemp(prefix="pl_subs_")
+    chain = CLIENT_CHAIN if is_youtube(url) else [None]
     try:
-        for manual in (True, False):
-            for f in glob.glob(os.path.join(tmp, "*")):
-                os.remove(f)
-            opts = ydl_opts({
-                "writesubtitles": manual, "writeautomaticsub": not manual,
-                "subtitleslangs": ["en.*", "en"], "subtitlesformat": "vtt",
-                "outtmpl": os.path.join(tmp, "s.%(ext)s"),
-            })
-            with yt_dlp.YoutubeDL(opts) as ydl:
-                ydl.extract_info(url, download=True)
-            files = glob.glob(os.path.join(tmp, "*.vtt"))
-            if files:
-                segs = parse_vtt(files[0])
-                if not manual:
-                    segs = dedupe_rolling(segs)
-                if segs:
-                    return {"segments": segs, "source": "captions-manual" if manual else "captions-auto", "language": "en"}
+        for client in chain:
+            for manual in (True, False):
+                for f in glob.glob(os.path.join(tmp, "*")):
+                    os.remove(f)
+                opts = ydl_opts({
+                    "writesubtitles": manual, "writeautomaticsub": not manual,
+                    "subtitleslangs": ["en.*", "en"], "subtitlesformat": "vtt",
+                    "outtmpl": os.path.join(tmp, "s.%(ext)s"),
+                    **client_args(client),
+                })
+                try:
+                    with yt_dlp.YoutubeDL(opts) as ydl:
+                        ydl.extract_info(url, download=True)
+                except Exception:
+                    break  # this client is refused: go to the next one
+                files = glob.glob(os.path.join(tmp, "*.vtt"))
+                if files:
+                    segs = parse_vtt(files[0])
+                    if not manual:
+                        segs = dedupe_rolling(segs)
+                    if segs:
+                        return {"segments": segs, "source": "captions-manual" if manual else "captions-auto", "language": "en", "via": "yt-dlp:" + (client or "default")}
     finally:
         shutil.rmtree(tmp, ignore_errors=True)
+    return None
+
+# Public Invidious / Piped mirrors fetch captions from their own IPs. Free but flaky, so this is a last server-side resort.
+STATIC_INVIDIOUS = ["https://invidious.f5.si", "https://inv.nadeko.net", "https://yewtu.be", "https://invidious.nerdvpn.de"]
+STATIC_PIPED = ["https://api.piped.private.coffee", "https://pipedapi.kavin.rocks", "https://pipedapi.adminforge.de", "https://pipedapi.leptons.xyz"]
+
+def invidious_hosts():
+    hosts = []
+    try:
+        for _, i in json.loads(http_get("https://api.invidious.io/instances.json?sort_by=health", 6)):
+            if i.get("type") == "https" and i.get("api"):
+                hosts.append(i["uri"].rstrip("/"))
+    except Exception:
+        pass
+    return (hosts + [h for h in STATIC_INVIDIOUS if h not in hosts])[:6]
+
+def captions_via_mirrors(vid):
+    import time
+    deadline = time.time() + 22  # flaky by nature: never let the fallbacks stall the job
+    for host in STATIC_PIPED:
+        if time.time() > deadline:
+            return None
+        try:
+            d = json.loads(http_get(host + "/streams/" + vid, 6))
+            subs = [x for x in (d.get("subtitles") or []) if (x.get("code") or "")[:2] == "en"]
+            subs.sort(key=lambda x: bool(x.get("autoGenerated")))
+            for sub in subs[:1]:
+                segs = parse_vtt_text(http_get(sub["url"], 8))
+                if sub.get("autoGenerated"):
+                    segs = dedupe_rolling(segs)
+                if len(segs) > 5:
+                    return {"segments": segs, "source": "captions-auto" if sub.get("autoGenerated") else "captions-manual", "language": "en", "via": "piped", "title": d.get("title"), "channel": d.get("uploader"), "duration": d.get("duration")}
+        except Exception:
+            continue
+    for host in invidious_hosts():
+        if time.time() > deadline:
+            return None
+        try:
+            d = json.loads(http_get(host + "/api/v1/captions/" + vid, 6))
+            caps = [c for c in d.get("captions", []) if c.get("languageCode", "")[:2] == "en"]
+            caps.sort(key=lambda c: "auto" in c.get("label", "").lower())
+            for c in caps[:1]:
+                segs = parse_vtt_text(http_get(host + c["url"], 8))
+                if "auto" in c.get("label", "").lower():
+                    segs = dedupe_rolling(segs)
+                if len(segs) > 5:
+                    return {"segments": segs, "source": "captions-auto" if "auto" in c.get("label", "").lower() else "captions-manual", "language": "en", "via": "invidious"}
+        except Exception:
+            continue
     return None
 
 def cmd_info(url):
@@ -187,38 +284,51 @@ def cmd_info(url):
     out({"ok": True, "meta": meta_from_info(info)})
 
 def cmd_transcript(url):
+    if os.environ.get("PENLIGHT_SIMULATE_YT_BLOCK") == "1":  # test hook: behave like a host YouTube has blocked
+        fail("blocked", "YouTube is blocking this server's network, so I couldn't read the captions automatically. Use the 30-second workaround below: it uses your own browser, which YouTube trusts.")
     progress("fetching", 0.1, "Reading video details")
-    meta = None
-    try:
-        info = get_info(url)
-        meta = meta_from_info(info)
-    except Exception as e:  # noqa
-        code, msg = classify_error(str(e))
-        # metadata failure for youtube may still allow transcript API; keep going quietly
-        meta_err = (code, msg)
-        meta = None
+    meta, meta_err = None, None
     vid = youtube_id(url)
-    result, last_err = None, None
+    try:
+        meta = meta_from_info(get_info(url))
+    except Exception as e:  # noqa
+        meta_err = classify_error(str(e))
+        if vid:
+            meta = oembed_meta(vid)  # still lets the captions fallbacks run
+    result, last_err = None, (meta_err[1] if meta_err else None)
+    tried = []
     progress("fetching", 0.4, "Looking for captions")
     if vid:
         try:
-            result = captions_via_api(vid)
+            result = captions_via_api(vid); tried.append("transcript-api")
+            if result: result["via"] = "transcript-api"
         except Exception as e:  # noqa
             last_err = str(e)
-    if not result and meta is not None:
+    if not result and (meta is not None or not vid):
         try:
-            result = captions_via_ytdlp(url)
+            result = captions_via_ytdlp(url); tried.append("yt-dlp")
         except Exception as e:  # noqa
             last_err = last_err or str(e)
+    if not result and vid:
+        progress("fetching", 0.6, "Trying backup caption sources")
+        try:
+            result = captions_via_mirrors(vid); tried.append("mirrors")
+        except Exception as e:  # noqa
+            last_err = last_err or str(e)
+        if result:
+            meta = meta or {"title": result.get("title") or "Untitled lecture", "channel": result.get("channel"), "thumbnail": "https://i.ytimg.com/vi/%s/hqdefault.jpg" % vid, "duration": result.get("duration"), "id": vid, "webpage_url": "https://www.youtube.com/watch?v=" + vid, "language": None}
     if not result:
-        if meta is None:
-            code, msg = meta_err
-            fail(code, msg)
+        if vid and (meta_err and meta_err[0] in ("blocked", "failed", "network") or (last_err and classify_error(last_err)[0] == "blocked")):
+            fail("blocked", "YouTube is blocking this server's network, so I couldn't read the captions automatically. Use the 30-second workaround below: it uses your own browser, which YouTube trusts.")
+        if meta_err and meta is None:
+            fail(meta_err[0], meta_err[1])
         if last_err:
             code, msg = classify_error(last_err)
             if code in ("blocked", "restricted", "unavailable"):
                 fail(code, msg)
         fail("no_captions", "This video doesn't have captions I can read.")
+    progress("fetching", 0.95, "Got captions via " + result.get("via", "?"))
+    result.pop("title", None); result.pop("channel", None)
     out({"ok": True, "meta": meta, **result})
 
 def cmd_transcribe(url, model_name):

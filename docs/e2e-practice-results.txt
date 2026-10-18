@@ -1,0 +1,65 @@
+PASS  [desktop] practice page lists tiles  — 23 tiles
+PASS  [desktop] a "From my study sets" tile is offered
+PASS  [desktop] My weak areas (tutor) start→answer→finish→results  — 5 q, types mcq
+PASS  [desktop] Mixed TEAS (exam, timed) start→answer→finish→results  — 5 q, types mcq
+PASS  [desktop] Reading (tutor) start→answer→finish→results  — 5 q, types mcq
+PASS  [desktop] Math (exam, timed) start→answer→finish→results  — 5 q, types mcq
+PASS  [desktop] Science (tutor) start→answer→finish→results  — 5 q, types mcq
+PASS  [desktop] English & Language (exam, timed) start→answer→finish→results  — 5 q, types mcq
+PASS  [desktop] Mixed NCLEX (tutor) start→answer→finish→results  — 5 q, types mcq
+PASS  [desktop] Basic Care & Comfort (exam, timed) start→answer→finish→results  — 5 q, types sata/mcq
+PASS  [desktop] Health Promotion & Maintenance (tutor) start→answer→finish→results  — 5 q, types mcq
+PASS  [desktop] Management of Care (exam, timed) start→answer→finish→results  — 5 q, types mcq/sata
+PASS  [desktop] Pharmacological & Parenteral Therapies (tutor) start→answer→finish→results  — 5 q, types mcq
+PASS  [desktop] Physiological Adaptation (exam, timed) start→answer→finish→results  — 5 q, types mcq/sata
+PASS  [desktop] Psychosocial Integrity (tutor) start→answer→finish→results  — 5 q, types mcq
+PASS  [desktop] Reduction of Risk Potential (exam, timed) start→answer→finish→results  — 5 q, types mcq
+PASS  [desktop] Safety & Infection Control (tutor) start→answer→finish→results  — 5 q, types mcq/sata
+PASS  [desktop] Mixed core (exam, timed) start→answer→finish→results  — 5 q, types mcq
+PASS  [desktop] Anatomy & Physiology (tutor) start→answer→finish→results  — 5 q, types mcq
+PASS  [desktop] Fundamentals (exam, timed) start→answer→finish→results  — 5 q, types mcq
+PASS  [desktop] Med-Surg Basics (tutor) start→answer→finish→results  — 5 q, types mcq
+PASS  [desktop] Pharmacology (exam, timed) start→answer→finish→results  — 5 q, types mcq
+PASS  [desktop] Dosage drills (tutor) start→answer→finish→results  — 5 q, types numeric
+PASS  [desktop] Dosage concepts (exam, timed) start→answer→finish→results  — 5 q, types mcq
+PASS  [desktop] Pharmacology Basics & Medication Safety (tutor) start→answer→finish→results  — 5 q, types mcq
+PASS  [desktop] covered question types mcq, sata, numeric  — mcq,sata,numeric
+PASS  [desktop] lecture "Practice test" tab runs to results  — 10 q
+PASS  [desktop] "From my study sets" tile runs to results  — 10 q
+PASS  [desktop] retake-missed runs to results  — 10 q
+PASS  [desktop] no server errors or uncaught page errors
+PASS  [phone] practice page lists tiles  — 23 tiles
+PASS  [phone] a "From my study sets" tile is offered
+PASS  [phone] My weak areas (tutor) start→answer→finish→results  — 10 q, types mcq
+PASS  [phone] Mixed TEAS (tutor) start→answer→finish→results  — 10 q, types mcq
+PASS  [phone] Reading (tutor) start→answer→finish→results  — 10 q, types mcq
+PASS  [phone] Math (tutor) start→answer→finish→results  — 10 q, types mcq
+PASS  [phone] Science (tutor) start→answer→finish→results  — 10 q, types mcq
+PASS  [phone] English & Language (tutor) start→answer→finish→results  — 10 q, types mcq
+PASS  [phone] Mixed NCLEX (tutor) start→answer→finish→results  — 10 q, types mcq/sata
+PASS  [phone] Basic Care & Comfort (tutor) start→answer→finish→results  — 10 q, types mcq
+PASS  [phone] Health Promotion & Maintenance (tutor) start→answer→finish→results  — 10 q, types mcq/sata
+PASS  [phone] Management of Care (tutor) start→answer→finish→results  — 10 q, types sata/mcq
+PASS  [phone] Pharmacological & Parenteral Therapies (tutor) start→answer→finish→results  — 10 q, types mcq
+PASS  [phone] Physiological Adaptation (tutor) start→answer→finish→results  — 10 q, types mcq/sata
+PASS  [phone] Psychosocial Integrity (tutor) start→answer→finish→results  — 10 q, types mcq/sata
+PASS  [phone] Reduction of Risk Potential (tutor) start→answer→finish→results  — 10 q, types sata/mcq
+PASS  [phone] Safety & Infection Control (tutor) start→answer→finish→results  — 10 q, types mcq/sata
+PASS  [phone] Mixed core (tutor) start→answer→finish→results  — 10 q, types mcq
+PASS  [phone] Anatomy & Physiology (tutor) start→answer→finish→results  — 10 q, types mcq
+PASS  [phone] Fundamentals (tutor) start→answer→finish→results  — 10 q, types mcq
+PASS  [phone] Med-Surg Basics (tutor) start→answer→finish→results  — 10 q, types mcq
+PASS  [phone] Pharmacology (tutor) start→answer→finish→results  — 10 q, types mcq/sata
+PASS  [phone] Dosage drills (tutor) start→answer→finish→results  — 10 q, types numeric
+PASS  [phone] Dosage concepts (tutor) start→answer→finish→results  — 10 q, types mcq
+PASS  [phone] Pharmacology Basics & Medication Safety (tutor) start→answer→finish→results  — 10 q, types mcq/sata
+PASS  [phone] /practice has no sideways overflow after many finished tests  — scrollWidth 390 vs viewport 390
+PASS  [phone] /progress has no sideways overflow after many finished tests  — scrollWidth 390 vs viewport 390
+PASS  [phone] / has no sideways overflow after many finished tests  — scrollWidth 390 vs viewport 390
+PASS  [phone] covered question types mcq, sata, numeric  — mcq,sata,numeric
+PASS  [phone] lecture "Practice test" tab runs to results  — 10 q
+PASS  [phone] "From my study sets" tile runs to results  — 10 q
+PASS  [phone] retake-missed runs to results  — 7 q
+PASS  [phone] no server errors or uncaught page errors
+
+63/63 practice checks passed

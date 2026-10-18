@@ -18,3 +18,9 @@
 - [x] Dockerfile steps simulated on a clean clone (npm ci, playwright shell, worker setup, build, prune, start on :10000): health, ingest, 9-page PDF, YouTube-blocked message, snapshot restore all OK
 - [x] Public GitHub repo: https://github.com/JustUseFlint/penlight
 - [ ] Brian: click Deploy to Render, paste a free Neon/Supabase postgres:// URL as PERSIST_DATABASE_URL
+
+## Session notes (practice fix + YouTube)
+- Pushed 56cb019: practice fix (phone quick-start bar, overflow fix, retry on wake-up, e2e-practice.mjs). Local: api 70/70, ui 60/60.
+- Root cause found: on phones the Start button sat below ~22 topic tiles (tap did nothing visible) and /practice grew sideways after finished tests (long titles). API/desktop worked on live.
+- YouTube (uncommitted until verified): worker/ingest.py stdout isolation (yt-dlp progress broke JSON => "failed unexpectedly"), client chain, oEmbed, mirrors; bookmarklet src/lib/ytlet.ts, /import, /new-from-youtube, YouTubeHelper; scripts/e2e-youtube.mjs 12/12 local.
+- TODO: verify live practice after deploy; commit+push YouTube; verify live YouTube ingest.

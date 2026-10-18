@@ -48,7 +48,9 @@ function run(cmd: 'info' | 'transcript' | 'transcribe', url: string, onProgress:
     child.on('close', () => {
       clearTimeout(timer);
       try {
-        resolve(JSON.parse(out.trim().split('\n').pop() || ''));
+        // the worker prints one JSON document; tolerate stray text from third-party libraries before it
+        const i = out.lastIndexOf('\n{"');
+        resolve(JSON.parse((i >= 0 ? out.slice(i + 1) : out).trim()));
       } catch {
         const missing = /No module named '(\w+)'/.exec(err);
         resolve({

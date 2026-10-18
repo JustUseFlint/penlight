@@ -6,3 +6,4 @@ logs/
 tsconfig.tsbuildinfo
 *.log
 data-demo/
+worker/__pycache__/

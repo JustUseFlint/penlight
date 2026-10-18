@@ -5,10 +5,11 @@ import { AlertTriangle, Check, Loader2 } from 'lucide-react';
 import { api } from '@/lib/client';
 import { Progress, ButtonLink } from '@/components/ui';
 import { IngestBox } from '@/components/IngestBox';
+import { YouTubeHelper } from '@/components/YouTubeHelper';
 import { fireConfetti } from '@/components/confetti';
 import { useApp } from '@/components/AppContext';
 
-interface Job { id: string; status: 'queued' | 'running' | 'done' | 'error'; stage: string; progress: number; message: string | null; error: string | null; error_code: string | null; lecture_id: string | null }
+interface Job { id: string; status: 'queued' | 'running' | 'done' | 'error'; stage: string; progress: number; message: string | null; error: string | null; error_code: string | null; lecture_id: string | null; url?: string | null }
 const STEPS = [
   { id: 'fetching', label: 'Fetching video & captions' },
   { id: 'transcribing', label: 'Transcribing audio (only if no captions)' },
@@ -43,7 +44,7 @@ export default function JobPage({ params }: { params: Promise<{ jobId: string }>
   const idx = job ? STEPS.findIndex((s) => s.id === job.stage) : 0;
   const err = job?.status === 'error';
   const hint: Record<string, string> = {
-    blocked: 'YouTube is blocking automated caption requests from this network right now. Paste the transcript instead (YouTube: ⋯ → Show transcript), or upload a .srt/.vtt file.',
+    blocked: 'YouTube is blocking caption requests from this server’s network (it does that to all web hosts). Your own browser is not blocked, so use the helper below.',
     no_captions: 'This video has no captions available. Paste or upload a transcript, or enable the audio fallback (see README).',
     restricted: 'This video is restricted (private, members-only, or age-gated), so captions are unavailable.',
     whisper_unavailable: 'No captions were found and the optional local transcription tool is not installed. Paste or upload a transcript instead.',
@@ -79,10 +80,14 @@ export default function JobPage({ params }: { params: Promise<{ jobId: string }>
           <div className="mt-5">
             <p role="alert" className="rounded-xl bg-danger-50 text-danger-600 px-4 py-3 text-sm font-medium">{job?.error}</p>
             {job?.error_code && hint[job.error_code] && <p className="text-sm text-muted mt-3">{hint[job.error_code]}</p>}
-            <div className="mt-6 pt-6 border-t border-line">
-              <h2 className="font-bold mb-3">Try a transcript instead</h2>
-              <IngestBox initialTab="paste" />
-            </div>
+            {job?.url && /youtu/i.test(job.url) && ['blocked', 'failed', 'no_captions', 'network', 'timeout', 'unavailable'].includes(job.error_code ?? '') ? (
+              <div className="mt-6"><YouTubeHelper videoUrl={job.url} /></div>
+            ) : (
+              <div className="mt-6 pt-6 border-t border-line">
+                <h2 className="font-bold mb-3">Try a transcript instead</h2>
+                <IngestBox initialTab="paste" />
+              </div>
+            )}
             <div className="mt-4"><ButtonLink href="/" variant="ghost" size="sm">Back to home</ButtonLink></div>
           </div>
         )}

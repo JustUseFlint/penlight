@@ -12,7 +12,7 @@ import { logActivity } from '../progress';
 
 export type IngestInput =
   | { kind: 'url'; url: string; mode?: 'auto' | 'lite' | 'ai' }
-  | { kind: 'paste'; text: string; title?: string; mode?: 'auto' | 'lite' | 'ai' }
+  | { kind: 'paste'; text: string; title?: string; sourceUrl?: string; mode?: 'auto' | 'lite' | 'ai' }
   | { kind: 'upload'; text: string; filename: string; title?: string; mode?: 'auto' | 'lite' | 'ai' }
   | { kind: 'sample'; slug: string; mode?: 'auto' | 'lite' | 'ai' }
   | { kind: 'regenerate'; lectureId: string; mode: 'lite' | 'ai' };
@@ -79,6 +79,11 @@ async function runJob(jobId: string, userId: string, lectureId: string, input: I
       if (parsed.format === 'plain') durationSec = Math.round(wordCount(segments) / 2.6);
       else durationSec = Math.round(Math.max(...segments.map((s) => s.start)) + 8);
       meta = { title: input.title || ('filename' in input ? input.filename.replace(/\.[a-z0-9]+$/i, '') : 'Pasted lecture') };
+      // a transcript copied from a YouTube tab keeps its link, so key points can jump back to the exact moment
+      if (input.kind === 'paste' && input.sourceUrl) {
+        const pu = parseVideoUrl(input.sourceUrl);
+        if (pu.ok && pu.kind === 'youtube' && pu.id) { meta.url = pu.url; meta.thumbnail = `https://i.ytimg.com/vi/${pu.id}/hqdefault.jpg`; }
+      }
     } else {
       const parsed = parseVideoUrl(input.url);
       if (!parsed.ok) throw new IngestError('bad_url', parsed.error);

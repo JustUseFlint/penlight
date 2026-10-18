@@ -34,8 +34,9 @@ export function AppProvider({ children }: { children: ReactNode }) {
   }, []);
   const refresh = useCallback(async () => {
     try {
-      const [m, d] = await Promise.all([api<Me>('/api/me'), api<Summary>('/api/dashboard')]);
-      setMe(m); setSummary({ xp: d.xp, streak: d.streak });
+      // /api/me first: on a first visit it creates the guest session, and two cookie-less requests in parallel would create two guests
+      const m = await api<Me>('/api/me'); setMe(m);
+      const d = await api<Summary>('/api/dashboard'); setSummary({ xp: d.xp, streak: d.streak });
     } catch { /* ignore */ }
   }, []);
   useEffect(() => { refresh(); }, [refresh]);

@@ -1,6 +1,7 @@
 'use client';
 import { useRef, useState } from 'react';
 import { useRouter } from 'next/navigation';
+import Link from 'next/link';
 import { FileText, Link2, Loader2, Upload, Wand2 } from 'lucide-react';
 import { api, cx } from '@/lib/client';
 import { Button, ModeBadge } from './ui';
@@ -83,6 +84,7 @@ export function IngestBox({ hero = false, initialTab = 'link', samples }: { hero
       </form>
       <div className="mt-3 flex flex-wrap items-center gap-x-4 gap-y-2 text-sm text-muted">
         <span className="inline-flex items-center gap-2">Output: <ModeBadge mode={me?.llm.configured && me.llm.mode !== 'lite' ? 'ai' : 'lite'} /></span>
+        {tab === 'link' && /youtu/i.test(url) && <Link href="/new-from-youtube" className="font-bold text-brand-700">YouTube not working? Use the 30-second helper</Link>}
         {samples && samples.length > 0 && (
           <span className="inline-flex flex-wrap items-center gap-2">No lecture handy? Try a sample:
             {samples.map((s) => <button key={s.slug} disabled={busy} onClick={() => go({ kind: 'sample', slug: s.slug })} className="chip hover:bg-brand-100 transition" aria-label={`Try sample lecture: ${s.title}`}>{s.title.split(/[:&]/)[0].trim()}</button>)}

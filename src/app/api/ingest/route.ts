@@ -7,7 +7,7 @@ import { getSetting } from '@/lib/db';
 export const GET = route(async () => ({ samples: SAMPLES.map(({ slug, title, blurb, topic }) => ({ slug, title, blurb, topic })) }));
 export const POST = route(async ({ user, req }) => {
   const ct = req.headers.get('content-type') || '';
-  let b: { kind?: string; url?: string; text?: string; title?: string; slug?: string; mode?: string; filename?: string };
+  let b: { kind?: string; url?: string; sourceUrl?: string; text?: string; title?: string; slug?: string; mode?: string; filename?: string };
   if (ct.includes('multipart/form-data')) {
     const fd = await req.formData();
     const f = fd.get('file');
@@ -28,7 +28,7 @@ export const POST = route(async ({ user, req }) => {
     }
     case 'paste': {
       if ((b.text || '').trim().split(/\s+/).length < 80) throw new Error('Paste at least ~80 words of transcript text.');
-      input = { kind: 'paste', text: b.text!, title: b.title, mode };
+      input = { kind: 'paste', text: b.text!, title: b.title?.slice(0, 200), sourceUrl: b.sourceUrl, mode };
       break;
     }
     case 'upload': input = { kind: 'upload', text: b.text || '', filename: b.filename || 'upload.txt', title: b.title, mode }; break;
